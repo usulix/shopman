@@ -16,12 +16,9 @@ class UserResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
             'name' => $this->name,
             'email' => $this->email,
-            'owner' => $this->owner,
-            'photo' => $this->photo ? url()->route('image', ['path' => $this->photo, 'w' => 60, 'h' => 60, 'fit' => 'crop']) : null,
+            'isOwner' => $this->isOwner,
             'deleted_at' => $this->deleted_at,
             'account' => $this->whenLoaded('account'),
         ];

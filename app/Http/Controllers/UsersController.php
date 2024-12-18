@@ -2,88 +2,59 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UserDeleteRequest;
-use App\Http\Requests\UserStoreRequest;
-use App\Http\Requests\UserUpdateRequest;
-use App\Http\Resources\UserCollection;
-use App\Http\Resources\UserResource;
+use App\Http\Requests\UsersStoreRequest;
+use App\Http\Requests\UsersUpdateRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Request;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class UsersController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): View
     {
-        return Inertia::render('Users/Index', [
-            'filters' => Request::all('search', 'role', 'trashed'),
-            'users' => new UserCollection(
-                Auth::user()->account->users()
-                    ->orderByName()
-                    ->filter(Request::only('search', 'role', 'trashed'))
-                    ->paginate()
-                    ->appends(Request::all())
-            ),
-        ]);
+        $users = User::all();
+
+        return view('user.index', compact('users'));
     }
 
-    public function create(): Response
+    public function create(Request $request): View
     {
-        return Inertia::render('Users/Create');
+        return view('user.create');
     }
 
-    public function store(UserStoreRequest $request): RedirectResponse
+    public function store(UsersStoreRequest $request): RedirectResponse
     {
-        $user = Auth::user()->account->users()->create(
-            $request->validated()
-        );
+        $user = User::create($request->validated());
 
-        if ($request->hasFile('photo')) {
-            $user->update([
-                'photo' => $request->file('photo')->store('users'),
-            ]);
-        }
+        $request->session()->flash('user.id', $user->id);
 
-        return Redirect::route('users')->with('success', 'User created.');
+        return redirect()->route('users.index');
     }
 
-    public function edit(User $user): Response
+    public function show(Request $request, User $user): View
     {
-        return Inertia::render('Users/Edit', [
-            'user' => new UserResource($user),
-        ]);
+        return view('user.show', compact('user'));
     }
 
-    public function update(User $user, UserUpdateRequest $request): RedirectResponse
+    public function edit(Request $request, User $user): View
     {
-        $user->update(
-            $request->validated()
-        );
-
-        if ($request->hasFile('photo')) {
-            $user->update([
-                'photo' => $request->file('photo')->store('users'),
-            ]);
-        }
-
-        return Redirect::back()->with('success', 'User updated.');
+        return view('user.edit', compact('user'));
     }
 
-    public function destroy(User $user, UserDeleteRequest $request): RedirectResponse
+    public function update(UsersUpdateRequest $request, User $user): RedirectResponse
+    {
+        $user->update($request->validated());
+
+        $request->session()->flash('user.id', $user->id);
+
+        return redirect()->route('users.index');
+    }
+
+    public function destroy(Request $request, User $user): RedirectResponse
     {
         $user->delete();
 
-        return Redirect::back()->with('success', 'User deleted.');
-    }
-
-    public function restore(User $user): RedirectResponse
-    {
-        $user->restore();
-
-        return Redirect::back()->with('success', 'User restored.');
+        return redirect()->route('users.index');
     }
 }

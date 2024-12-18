@@ -13,16 +13,14 @@ import FieldGroup from '@/Components/Form/FieldGroup';
 
 const Edit = () => {
   const { user } = usePage<{
-    user: User & { password: string; photo: File | null };
+    user: User & { password: string };
   }>().props;
 
   const { data, setData, errors, post, processing } = useForm({
-    first_name: user.first_name || '',
-    last_name: user.last_name || '',
+    name: user.name || '',
     email: user.email || '',
     password: user.password || '',
-    owner: user.owner ? '1' : '0' || '0',
-    photo: '',
+    isOwner: user.isOwner ? '1' : '0' || '0',
 
     // NOTE: When working with Laravel PUT/PATCH requests and FormData
     // you SHOULD send POST request and fake the PUT request like this.
@@ -50,7 +48,7 @@ const Edit = () => {
 
   return (
     <div>
-      <Head title={`${data.first_name} ${data.last_name}`} />
+      <Head title={`${data.name}`} />
       <div className="flex justify-start max-w-lg mb-8">
         <h1 className="text-3xl font-bold">
           <Link
@@ -60,11 +58,8 @@ const Edit = () => {
             Users
           </Link>
           <span className="mx-2 font-medium text-indigo-600">/</span>
-          {data.first_name} {data.last_name}
+          {data.name}
         </h1>
-        {user.photo && (
-          <img className="block w-8 h-8 ml-4 rounded-full" src={user.photo} />
-        )}
       </div>
       {user.deleted_at && (
         <TrashedMessage
@@ -76,27 +71,15 @@ const Edit = () => {
         <form onSubmit={handleSubmit}>
           <div className="grid gap-8 p-8 lg:grid-cols-2">
             <FieldGroup
-              label="First Name"
-              name="first_name"
-              error={errors.first_name}
+              label="Name"
+              name="name"
+              error={errors.name}
             >
               <TextInput
-                name="first_name"
-                error={errors.first_name}
-                value={data.first_name}
-                onChange={e => setData('first_name', e.target.value)}
-              />
-            </FieldGroup>
-            <FieldGroup
-              label="Last Name"
-              name="last_name"
-              error={errors.last_name}
-            >
-              <TextInput
-                name="last_name"
-                error={errors.last_name}
-                value={data.last_name}
-                onChange={e => setData('last_name', e.target.value)}
+                name="name"
+                error={errors.name}
+                value={data.name}
+                onChange={e => setData('name', e.target.value)}
               />
             </FieldGroup>
 
@@ -126,10 +109,10 @@ const Edit = () => {
 
             <FieldGroup label="Owner" name="owner" error={errors.owner}>
               <SelectInput
-                name="owner"
-                error={errors.owner}
-                value={data.owner}
-                onChange={e => setData('owner', e.target.value)}
+                name="isOwner"
+                error={errors.isOwner}
+                value={data.isOwner}
+                onChange={e => setData('isOwner', e.target.value)}
                 options={[
                   { value: '1', label: 'Yes' },
                   { value: '0', label: 'No' }
@@ -137,17 +120,6 @@ const Edit = () => {
               />
             </FieldGroup>
 
-            <FieldGroup label="Photo" name="photo" error={errors.photo}>
-              <FileInput
-                name="photo"
-                accept="image/*"
-                error={errors.photo}
-                value={data.photo}
-                onChange={photo => {
-                  setData('photo', photo as unknown as string);
-                }}
-              />
-            </FieldGroup>
           </div>
           <div className="flex items-center px-8 py-4 bg-gray-100 border-t border-gray-200">
             {!user.deleted_at && (

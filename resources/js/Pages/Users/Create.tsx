@@ -8,12 +8,10 @@ import FieldGroup from '@/Components/Form/FieldGroup';
 
 const Create = () => {
   const { data, setData, errors, post, processing } = useForm({
-    first_name: '',
-    last_name: '',
+    name: '',
     email: '',
     password: '',
-    owner: '0',
-    photo: ''
+    isOwner: '0'
   });
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -38,28 +36,15 @@ const Create = () => {
         <form onSubmit={handleSubmit}>
           <div className="grid gap-8 p-8 lg:grid-cols-2">
             <FieldGroup
-              label="First Name"
-              name="first_name"
-              error={errors.first_name}
+              label="Name"
+              name="name"
+              error={errors.name}
             >
               <TextInput
-                name="first_name"
-                error={errors.first_name}
-                value={data.first_name}
-                onChange={e => setData('first_name', e.target.value)}
-              />
-            </FieldGroup>
-
-            <FieldGroup
-              label="Last Name"
-              name="last_name"
-              error={errors.last_name}
-            >
-              <TextInput
-                name="last_name"
-                error={errors.last_name}
-                value={data.last_name}
-                onChange={e => setData('last_name', e.target.value)}
+                name="name"
+                error={errors.name}
+                value={data.name}
+                onChange={e => setData('name', e.target.value)}
               />
             </FieldGroup>
 
@@ -89,24 +74,14 @@ const Create = () => {
 
             <FieldGroup label="Owner" name="owner" error={errors.owner}>
               <SelectInput
-                name="owner"
-                error={errors.owner}
-                value={data.owner}
-                onChange={e => setData('owner', e.target.value)}
+                name="isOwner"
+                error={errors.isOwner}
+                value={data.isOwner}
+                onChange={e => setData('isOwner', e.target.value)}
                 options={[
                   { value: '1', label: 'Yes' },
                   { value: '0', label: 'No' }
                 ]}
-              />
-            </FieldGroup>
-
-            <FieldGroup label="Photo" name="photo" error={errors.photo}>
-              <FileInput
-                name="photo"
-                accept="image/*"
-                error={errors.photo}
-                value={data.photo}
-                onChange={photo => setData('photo', photo as unknown as string)}
               />
             </FieldGroup>
           </div>
