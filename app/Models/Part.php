@@ -33,6 +33,26 @@ class Part extends Model
         'received' => 'boolean',
     ];
 
+    public function getPriceAttribute($value)
+    {
+        return "$".$value / 100;
+    }
+
+    public function getReceivedAttribute($value)
+    {
+        return $value ? 'Yes' : 'No';
+    }
+
+    public function setPriceAttribute($value)
+    {
+        $this->attributes['price'] = preg_replace("/[^0-9]/", "", $value);
+    }
+
+    public function setReceivedAttribute($value)
+    {
+        $this->attributes['received'] = $value == 'Yes' ? 1 : 0;
+    }
+
     public function lineItems(): BelongsToMany
     {
         return $this->belongsToMany(LineItem::class);

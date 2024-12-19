@@ -14,9 +14,9 @@ class PartController extends Controller
 {
     public function index(Request $request)
     {
-        $parts = Part::all();
+        $parts = Part::paginate(20);
 
-        return Inertia::render('Parts/Index', compact('parts'));
+        return Inertia::render('Parts/Index', $parts);
     }
 
     public function create(Request $request): View
@@ -30,7 +30,7 @@ class PartController extends Controller
 
         $request->session()->flash('part.id', $part->id);
 
-        return redirect()->route('parts.index');
+        return to_route('parts.index');
     }
 
     public function show(Request $request, Part $part): View
@@ -38,9 +38,9 @@ class PartController extends Controller
         return view('part.show', compact('part'));
     }
 
-    public function edit(Request $request, Part $part): View
+    public function edit(Request $request, Part $part)
     {
-        return view('part.edit', compact('part'));
+        return Inertia::render('Parts/Edit', compact('part'));
     }
 
     public function update(PartUpdateRequest $request, Part $part): RedirectResponse
@@ -49,13 +49,13 @@ class PartController extends Controller
 
         $request->session()->flash('part.id', $part->id);
 
-        return redirect()->route('parts.index');
+        return to_route('parts.index');
     }
 
     public function destroy(Request $request, Part $part): RedirectResponse
     {
         $part->delete();
 
-        return redirect()->route('parts.index');
+        return to_route('parts.index');
     }
 }

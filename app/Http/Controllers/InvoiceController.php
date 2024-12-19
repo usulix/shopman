@@ -8,14 +8,15 @@ use App\Models\Invoice;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Inertia\Inertia;
 
 class InvoiceController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request)
     {
-        $invoices = Invoice::all();
+        $invoices = Invoice::paginate(10);
 
-        return view('invoice.index', compact('invoices'));
+        return Inertia::render('Invoices/Index', compact('invoices'));
     }
 
     public function create(Request $request): View
@@ -37,9 +38,9 @@ class InvoiceController extends Controller
         return view('invoice.show', compact('invoice'));
     }
 
-    public function edit(Request $request, Invoice $invoice): View
+    public function edit(Request $request, Invoice $invoice)
     {
-        return view('invoice.edit', compact('invoice'));
+        return Inertia::render('Invoices/Edit', compact('invoice'));
     }
 
     public function update(InvoiceUpdateRequest $request, Invoice $invoice): RedirectResponse
@@ -48,7 +49,7 @@ class InvoiceController extends Controller
 
         $request->session()->flash('invoice.id', $invoice->id);
 
-        return redirect()->route('invoices.index');
+        return to_route('invoices.index');
     }
 
     public function destroy(Request $request, Invoice $invoice): RedirectResponse

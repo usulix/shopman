@@ -31,7 +31,18 @@ class Invoice extends Model
         'id' => 'integer',
         'number' => 'integer',
         'task_id' => 'integer',
+        'total' => 'integer',
     ];
+
+    public function getTotalAttribute($value)
+    {
+        return "$".$value / 100;
+    }
+
+    public function setTotalAttribute($value)
+    {
+        $this->attributes['total'] = preg_replace("/[^0-9]/", "", $value);
+    }
 
     public function task(): BelongsTo
     {

@@ -23,6 +23,7 @@ class InvoiceStoreRequest extends FormRequest
             'number' => ['required', 'integer', 'gt:0'],
             'status' => ['required', 'string'],
             'task_id' => ['required', 'integer', 'exists:tasks,id'],
+            'total' => ['integer'],
         ];
     }
 }

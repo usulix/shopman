@@ -6,6 +6,7 @@ use App\Http\Requests\CustomerStoreRequest;
 use App\Http\Requests\CustomerUpdateRequest;
 use App\Models\Customer;
 use App\Models\Unit;
+use Auth;
 use DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,7 +17,13 @@ class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        $customers = DB::table('customers')->paginate(15);
+        $userAccounts = DB::table("account_user as au")
+            ->join('accounts as a','au.account_id', '=', 'a.id')
+            ->where('user_id', Auth::id())
+            ->pluck('account_id')->toArray();
+
+        $customers = DB::table('customers')->whereIn('account_id', $userAccounts)
+            ->paginate(15);
 
         return Inertia::render('Customer/Index', compact('customers'));
     }

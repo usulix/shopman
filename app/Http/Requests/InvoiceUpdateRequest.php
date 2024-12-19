@@ -20,9 +20,10 @@ class InvoiceUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'number' => ['required', 'integer', 'gt:0'],
-            'status' => ['required', 'string'],
-            'task_id' => ['required', 'integer', 'exists:tasks,id'],
+            'number' => ['prohibited'],
+            'status' => ['string'],
+            'task_id' => ['prohibited'],
+            'total' => ['prohibited'],
         ];
     }
 }
